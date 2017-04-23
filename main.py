@@ -17,18 +17,14 @@ if __name__ == '__main__':
 
     # Create a scene
     scene = QGraphicsScene()
-
     # Create an item to add to the scene
-    score = gui.Score()
-    player = game.MyRect(score)
+    score = gui.Score(scene)
+    health = gui.Health(scene)
+    player = game.MyRect(scene, score, health)
     player.setRect(0, 0, 100, 100)
     # Item needs to focused to see keyevents
     player.setFlag(QGraphicsItem.ItemIsFocusable, True)
     player.setFocus()
-
-    # Add the items to the scene
-    scene.addItem(player)
-    scene.addItem(score)
 
     # Show the scene
     # First the view widget gets the event, which sends it to the scene

@@ -10,17 +10,18 @@ import gui
 # other areas of the view
 # myrect
 class MyRect(QGraphicsRectItem):
-    def __init__(self, score):
+    def __init__(self, scene, score, health):
         super().__init__()
-        self.enemies = []
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.spawnEnemy)
-        self.timer.start(1000)
+        scene.addItem(self)
         self.motion = 0
         self.moveTimer = QTimer()
         self.moveTimer.timeout.connect(self.move)
         self.moveTimer.start(50)
         self.score = score
+        self.health = health
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.spawnEnemy)
+        self.timer.start(1000)
 
     def move(self):
         self.setPos(self.x() + 10*self.motion, self.y())
@@ -51,7 +52,7 @@ class MyRect(QGraphicsRectItem):
                 self.motion = 0
 
     def spawnEnemy(self):
-        self.scene().addItem(Enemy())
+        self.scene().addItem(Enemy(self.health))
 
 
 class Bullet(QGraphicsRectItem):
@@ -59,34 +60,31 @@ class Bullet(QGraphicsRectItem):
         super().__init__()
         self.setRect(0, 0, 10, 30)
         self.timer = QTimer()
-        self.timer.timeout.connect(lambda: self.move(score))
+        self.timer.timeout.connect(self.move)
         self.timer.start(50)
+        self.score = score
 
-    def move(self, score):
+    def move(self):
         # If the bullet collides with the enemy destroy both
         collidingItems = self.collidingItems()
 
         for item in collidingItems:
             if isinstance(item, Enemy):
+                self.score.increase()
                 self.scene().removeItem(item)
                 self.scene().removeItem(self)
-                self.timer.stop()
-                del item
-                del self
-                score.increase()
                 return
 
-        # move # TODO: he bullet up
         self.setPos(self.x(), self.y() - 10)
         if self.pos().y() < 0:
             self.scene().removeItem(self)
-            self.timer.stop()
-            del self
+
 
 
 class Enemy(QGraphicsRectItem):
-    def __init__(self):
+    def __init__(self, health):
         super().__init__()
+        self.health = health
         self.setRect(0, 0, 100, 100)
         # set random position
         random_number = random.randint(0, 800 - self.rect().width())
@@ -97,5 +95,10 @@ class Enemy(QGraphicsRectItem):
         self.timer.start(50)
 
     def move(self):
-        self.setPos(self.x(), self.y() + 3)
+        if self.pos().y() > 600:
+            self.health.decrease()
+            self.scene().removeItem(self)
+            return
+        else:
+            self.setPos(self.x(), self.y() + 3)
 
