@@ -1,52 +1,17 @@
 from PyQt5.QtWidgets import (QApplication, QGraphicsScene,
-                             QGraphicsRectItem, QGraphicsView, QGraphicsItem)
-from PyQt5.QtCore import qDebug, Qt, QTimer
+                             QGraphicsView, QGraphicsItem)
+from PyQt5.QtCore import Qt
+from PyQt5.QtOpenGL import QGLWidget
 import sys
-
-
-# 3 coordinates to keep track off
-# scene - gets bigger as more objects are added (or as objects get bigger)
-# view - as scene gets bigger, view develops scrollbars to see
-#                              other areas of the view 
-# myrect
-
-
-class MyRect(QGraphicsRectItem):
-    def __init__(self):
-        super().__init__()
-
-    def keyPressEvent(self, e):
-        if e.key() == Qt.Key_Left:
-            self.setPos(self.x() - 10, self.y())
-        elif e.key() == Qt.Key_Right:
-            self.setPos(self.x() + 10, self.y())
-        elif e.key() == Qt.Key_Up:
-            self.setPos(self.x(), self.y() - 10)
-        elif e.key() == Qt.Key_Down:
-            self.setPos(self.x(), self.y() + 10)
-        elif e.key() == Qt.Key_Space:
-            bullet = Bullet()
-            self.scene().addItem(bullet)
-
-
-class Bullet(QGraphicsRectItem):
-    def __init__(self):
-        super().__init__()
-        self.setRect(0, 0, 10, 10)
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.move)
-        self.timer.start(50)
-
-    def move(self):
-        # move the bullet up
-        self.setPos(self.x(), self.y() - 10)
+import game
+import gui
 
 
 if __name__ == '__main__':
     try:
         if app:
             pass
-    except:
+    except NameError:
         app = QApplication(sys.argv)
         print("app exists")
 
@@ -54,22 +19,28 @@ if __name__ == '__main__':
     scene = QGraphicsScene()
 
     # Create an item to add to the scene
-    rect = MyRect()
-    rect.setRect(0, 0, 100, 100)
+    score = gui.Score()
+    player = game.MyRect(score)
+    player.setRect(0, 0, 100, 100)
     # Item needs to focused to see keyevents
-    rect.setFlag(QGraphicsItem.ItemIsFocusable, True)
-    rect.setFocus()
+    player.setFlag(QGraphicsItem.ItemIsFocusable, True)
+    player.setFocus()
 
-    # Add the item to the scene
-    scene.addItem(rect)
+    # Add the items to the scene
+    scene.addItem(player)
+    scene.addItem(score)
 
     # Show the scene
     # First the view widget gets the event, which sends it to the scene
     # The scene sends the event to the item in focus
     view = QGraphicsView(scene)
+    view.setViewport(QGLWidget())
     view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
     view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
     view.setFixedSize(800, 600)
-    scene.setSceneRect(0, 0, 600, 800)
+    scene.setSceneRect(0, 0, 800, 600)
+
+    player.setPos(view.width()/2, view.height() - player.rect().height())
+    view.show()
 
     app.exec_()
