@@ -1,7 +1,7 @@
+import PyQt5.QtMultimedia as M
 from PyQt5.QtWidgets import QGraphicsRectItem
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QUrl
 import random
-import gui
 
 
 # 3 coordinates to keep track off
@@ -22,6 +22,11 @@ class MyRect(QGraphicsRectItem):
         self.timer = QTimer()
         self.timer.timeout.connect(self.spawnEnemy)
         self.timer.start(1000)
+        url = QUrl.fromLocalFile("./res/sounds/bullet.mp3")
+        media = M.QMediaContent(url)
+        self.bulletSound = M.QMediaPlayer()
+        self.bulletSound.setMedia(media)
+        self.bullets = 8
 
     def move(self):
         self.setPos(self.x() + 10*self.motion, self.y())
@@ -36,11 +41,22 @@ class MyRect(QGraphicsRectItem):
                 self.motion = 1
 
         if e.key() == Qt.Key_Space:
-            bullet = Bullet(self.score)
-            bullet.setPos(
-                self.x() + self.rect().width()/2 -
-                bullet.rect().width()/2, self.y())
-            self.scene().addItem(bullet)
+            if Bullet.bullets >= 0:
+                Bullet.bullets -= 1
+                print(Bullet.bullets)
+
+                if self.bulletSound.state() == M.QMediaPlayer.PlayingState:
+                    self.bulletSound.setPosition(0)
+                else:
+                    self.bulletSound.play()
+
+                bullet = Bullet(self.score)
+                bullet.setPos(
+                    self.x() + self.rect().width()/2 -
+                    bullet.rect().width()/2, self.y())
+                self.scene().addItem(bullet)
+            else:
+                print("no bullets")
 
     def keyReleaseEvent(self, e):
         if e.key() == Qt.Key_Left:
@@ -56,6 +72,8 @@ class MyRect(QGraphicsRectItem):
 
 
 class Bullet(QGraphicsRectItem):
+    bullets = 8
+
     def __init__(self, score):
         super().__init__()
         self.setRect(0, 0, 10, 30)
@@ -70,6 +88,7 @@ class Bullet(QGraphicsRectItem):
 
         for item in collidingItems:
             if isinstance(item, Enemy):
+                Bullet.bullets += 1
                 self.score.increase()
                 self.scene().removeItem(item)
                 self.scene().removeItem(self)
@@ -77,8 +96,8 @@ class Bullet(QGraphicsRectItem):
 
         self.setPos(self.x(), self.y() - 10)
         if self.pos().y() < 0:
+            Bullet.bullets += 1
             self.scene().removeItem(self)
-
 
 
 class Enemy(QGraphicsRectItem):
@@ -101,4 +120,3 @@ class Enemy(QGraphicsRectItem):
             return
         else:
             self.setPos(self.x(), self.y() + 3)
-

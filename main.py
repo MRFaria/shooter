@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import (QApplication, QGraphicsScene,
                              QGraphicsView, QGraphicsItem)
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtOpenGL import QGLWidget
+import PyQt5.QtMultimedia as M
 import sys
 import game
 import gui
@@ -36,7 +37,18 @@ if __name__ == '__main__':
     view.setFixedSize(800, 600)
     scene.setSceneRect(0, 0, 800, 600)
 
+    # set the player position
     player.setPos(view.width()/2, view.height() - player.rect().height())
+
+    # play the background music
+    url = QUrl.fromLocalFile("./res/sounds/background.wav")
+    media = M.QMediaContent(url)
+    playlist = M.QMediaPlaylist()
+    playlist.addMedia(media)
+    playlist.setPlaybackMode(M.QMediaPlaylist.Loop)
+    music = M.QMediaPlayer()
+    music.setPlaylist(playlist)
+    music.play()
     view.show()
 
     app.exec_()
