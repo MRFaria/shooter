@@ -47,7 +47,7 @@ class MyRect(QGraphicsRectItem):
 
                 if self.bulletSound.state() == M.QMediaPlayer.PlayingState:
                     self.bulletSound.setPosition(0)
-                else:
+                elif self.bulletSound.state() == M.QMediaPlayer.StoppedState:
                     self.bulletSound.play()
 
                 bullet = Bullet(self.score)
