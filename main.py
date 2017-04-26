@@ -14,7 +14,6 @@ if __name__ == '__main__':
             pass
     except NameError:
         app = QApplication(sys.argv)
-        print("app exists")
 
     # Create a scene
     scene = QGraphicsScene()
@@ -31,6 +30,7 @@ if __name__ == '__main__':
     # First the view widget gets the event, which sends it to the scene
     # The scene sends the event to the item in focus
     view = QGraphicsView(scene)
+    view.setAttribute(Qt.WA_DeleteOnClose)
     view.setViewport(QGLWidget())
     view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
     view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -50,5 +50,4 @@ if __name__ == '__main__':
     music.setPlaylist(playlist)
     music.play()
     view.show()
-
-    app.exec_()
+    sys.exit(app.exec_())

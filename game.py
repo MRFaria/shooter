@@ -43,7 +43,6 @@ class MyRect(QGraphicsRectItem):
         if e.key() == Qt.Key_Space:
             if Bullet.bullets > 0:
                 Bullet.bullets -= 1
-                print(Bullet.bullets)
 
                 if self.bulletSound.state() == M.QMediaPlayer.PlayingState:
                     self.bulletSound.setPosition(0)
@@ -53,10 +52,8 @@ class MyRect(QGraphicsRectItem):
                 bullet = Bullet(self.score)
                 bullet.setPos(
                     self.x() + self.rect().width()/2 -
-                    bullet.rect().width()/2, self.y())
+                    bullet.pixmap().width()/2, self.y())
                 self.scene().addItem(bullet)
-            else:
-                print("no bullets")
 
     def keyReleaseEvent(self, e):
         if e.key() == Qt.Key_Left:
@@ -77,12 +74,12 @@ class Bullet(QGraphicsPixmapItem):
     def __init__(self, score):
         super().__init__()
         # self.setRect(0, 0, 10, 30)
-        self.setPixmap(QPixmap("./images/jorge.png"))
+        self.pmap = QPixmap("./res/images/bullet.png")
+        self.setPixmap(self.pmap)
         self.timer = QTimer()
         self.timer.timeout.connect(self.move)
         self.timer.start(50)
         self.score = score
-
 
     def move(self):
         # If the bullet collides with the enemy destroy both
