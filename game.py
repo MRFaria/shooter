@@ -32,7 +32,6 @@ class Player(QGraphicsPixmapItem):
         self.bulletSound.setMedia(media)
         self.bulletSound.setVolume(10)
 
-
     def move(self):
         self.setPos(self.x() + 10*self.motion, self.y())
 
