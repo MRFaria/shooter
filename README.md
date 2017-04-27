@@ -1,6 +1,6 @@
-# shooter - Only supports Python3
+# Shooter
 
-Requires PyQt5:
+Only runs under python3 and requires PyQt5:
 
 ```
 pip install PyQt5
