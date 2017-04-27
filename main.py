@@ -1,11 +1,19 @@
 from PyQt5.QtWidgets import (QApplication, QGraphicsScene,
-                             QGraphicsView, QGraphicsItem)
+                             QGraphicsView, QGraphicsItem,
+                             QMessageBox)
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtOpenGL import QGLWidget
 import PyQt5.QtMultimedia as M
 import sys
 import game
 import gui
+from PyQt5.QtGui import QPixmap
+import functools
+
+
+def gameOver(app, view, scene):
+    scene.clear()
+    gui.GameOver(scene)
 
 
 if __name__ == '__main__':
@@ -15,13 +23,15 @@ if __name__ == '__main__':
     except NameError:
         app = QApplication(sys.argv)
 
-    # Create a scene
+    # Create a ene
     scene = QGraphicsScene()
     # Create an item to add to the scene
     score = gui.Score(scene)
     health = gui.Health(scene)
-    player = game.MyRect(scene, score, health)
-    player.setRect(0, 0, 100, 100)
+
+    player = game.Player(scene, score, health)
+    player.setPixmap(QPixmap("./res/images/DurrrSpaceShip.png"))
+    # player.setRect(0, 0, 100, 100)
     # Item needs to focused to see keyevents
     player.setFlag(QGraphicsItem.ItemIsFocusable, True)
     player.setFocus()
@@ -37,8 +47,10 @@ if __name__ == '__main__':
     view.setFixedSize(800, 600)
     scene.setSceneRect(0, 0, 800, 600)
 
+    # set the end condition
+    health.dead.connect(functools.partial(gameOver, app, view, scene))
     # set the player position
-    player.setPos(view.width()/2, view.height() - player.rect().height())
+    player.setPos(view.width()/2, view.height() - player.pixmap().height())
 
     # play the background music
     url = QUrl.fromLocalFile("./res/sounds/background.wav")
@@ -48,6 +60,7 @@ if __name__ == '__main__':
     playlist.setPlaybackMode(M.QMediaPlaylist.Loop)
     music = M.QMediaPlayer()
     music.setPlaylist(playlist)
+    music.setVolume(10)
     music.play()
     view.show()
     sys.exit(app.exec_())
