@@ -9,6 +9,7 @@ class Score(QGraphicsTextItem):
         super().__init__(parent)
         scene.addItem(self)
         self._score = 0
+        self.setFont(QFont("Arial", 15))
         self.setPlainText("Score: " + str(self._score))
         self.setDefaultTextColor(Qt.blue)
 
@@ -24,9 +25,11 @@ class Health(QGraphicsTextItem):
         super().__init__(parent)
         scene.addItem(self)
         self._health = 1
+        self.setFont(QFont("Arial", 15))
         self.setPlainText("Health: " + str(self._health))
         self.setDefaultTextColor(Qt.red)
-        self.setPos(self.pos().x() + 50, self.y())
+        rect = self.boundingRect()
+        self.setPos((800/2) - rect.width()/2, self.y())
 
     def decrease(self):
         self._health -= 1

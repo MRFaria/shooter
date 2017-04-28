@@ -111,7 +111,7 @@ class Enemy(QGraphicsPixmapItem):
         # self.setRect(0, 0, 100, 100)
         # set random position
         self.pmap = QPixmap("./res/images/monster1.png") \
-            .scaled(64, 64, Qt.KeepAspectRatio)
+            .scaled(80, 80, Qt.KeepAspectRatio)
         self.setPixmap(self.pmap)
         random_number = random.randint(0, 800 - self.pixmap().width())
         self.setPos(random_number, 0)

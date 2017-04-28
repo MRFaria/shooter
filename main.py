@@ -1,13 +1,12 @@
 from PyQt5.QtWidgets import (QApplication, QGraphicsScene,
-                             QGraphicsView, QGraphicsItem,
-                             QMessageBox)
+                             QGraphicsView, QGraphicsItem)
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtOpenGL import QGLWidget
+from PyQt5.QtGui import QPixmap, QBrush, QImage
 import PyQt5.QtMultimedia as M
-import sys
 import game
 import gui
-from PyQt5.QtGui import QPixmap
+import sys
 import functools
 
 
@@ -40,6 +39,7 @@ if __name__ == '__main__':
     # First the view widget gets the event, which sends it to the scene
     # The scene sends the event to the item in focus
     view = QGraphicsView(scene)
+    view.setBackgroundBrush(QBrush(QImage("./res/images/background.png")))
     view.setAttribute(Qt.WA_DeleteOnClose)
     view.setViewport(QGLWidget())
     view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
